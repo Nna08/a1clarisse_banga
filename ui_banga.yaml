@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: banga-ui
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: banga-ui
+  template:
+    metadata:
+      labels:
+        app: banga-ui
+    spec:
+      containers:
+      - name: banga-ui
+        image: devopseasylearning/banga-ui:v0.0.1
+        ports:
+        - containerPort: 3000
+        env:
+        - name: AUTH_HOST
+          value: banga-auth
+        - name: AUTH_PORT
+          value: "8080"
+        - name: WEATHER_HOST
+          value: banga-weather
+        - name: WEATHER_PORT
+          value: "5000"
+        - name: REDIS_HOST
+          value: banga-redis
+        - name: REDIS_PASSWORD
+          value: redis   # Added REDIS_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: banga-ui
+spec:
+  selector:
+    app: banga-ui
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+      nodePort: 30010  # Define the NodePort
+  type: NodePort  # Set the service type to NodePort

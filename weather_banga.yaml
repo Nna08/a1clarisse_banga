@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: banga-weather
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: banga-weather
+  template:
+    metadata:
+      labels:
+        app: banga-weather
+    spec:
+      containers:
+      - name: banga-weather
+        image: devopseasylearning/banga-weather:v0.0.1
+        ports:
+        - containerPort: 5000
+        env:
+        - name: APIKEY
+          value: ecbc396f46mshb65cbb1f82cf334p1fcc87jsna5e962a3c542
+        - name: DB_HOST
+          value: banga-db
+        - name: DB_NAME
+          value: db
+        - name: DB_PORT
+          value: "3306"
+        - name: DB_PASSWORD
+          value: my-secret-pw
+        - name: DB_USER
+          value: root
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: banga-weather
+spec:
+  selector:
+    app: banga-weather
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: ClusterIP

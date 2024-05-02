@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: banga-auth
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+        version: v0.0.1
+    spec:
+      containers:
+      - name: auth
+        image: devopseasylearning/banga-auth:v0.0.1
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DB_HOST
+          value: banga-db
+        - name: DB_NAME
+          value: db
+        - name: DB_PORT
+          value: "3306"
+        - name: DB_PASSWORD
+          value: my-secret-pw
+        - name: DB_USER
+          value: root
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: banga-auth
+spec:
+  selector:
+    app: auth
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP  
